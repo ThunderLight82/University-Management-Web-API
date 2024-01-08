@@ -1,0 +1,15 @@
+﻿@model IEnumerable<UniversityManagement.Application.EntitiesDto.StudentDto>
+
+<div class="home-container">
+    
+    <div class="groups-list">
+        <h2>Students</h2>
+        <ul>
+            @foreach (var student in Model)
+            {
+                <li>@student.FirstName @student.LastName</li>
+            }
+        </ul>
+    </div>
+
+</div>
