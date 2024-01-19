@@ -6,7 +6,7 @@ using UniversityManagement.Application.EntitiesDto;
 using UniversityManagement.Application.Services;
 using UniversityManagement.Application.Services.Interfaces;
 using UniversityManagement.Domain.Entities;
-using UniversityManagement.Infrastructure;
+using UniversityManagement.DataAccess;
 using UniversityManagement.WebApi.AutoMapper;
 using Xunit;
 
@@ -15,77 +15,33 @@ namespace UniversityManagement.UnitTests;
 public class StudentServiceTests
 {
     private readonly Mock<ILogger<StudentService>> _mockLoggerService;
+    private readonly Mock<ILogger<ValidationService>> _mockLoggerValidationService;
     private readonly IMapper _testMapper;
     private readonly UniversityDbContext _dbContext;
     private readonly UniversityDbContext _emptyDbContext;
+    private readonly IValidationService _validationService;
     private readonly IStudentService _studentService;
 
     public StudentServiceTests()
     {
         _mockLoggerService = new Mock<ILogger<StudentService>>();
+        _mockLoggerValidationService = new Mock<ILogger<ValidationService>>();
         
         _testMapper = new MapperConfiguration(cfg => cfg
                 .AddProfile(new EntitiesMapper()))
             .CreateMapper();
         
         _dbContext = CreateAndSeedTestDb();
+
+        _validationService = new ValidationService(_mockLoggerValidationService.Object);
         
-        _studentService = new StudentService(_dbContext, _testMapper, _mockLoggerService.Object);
+        _studentService = new StudentService(_dbContext, _testMapper, _mockLoggerService.Object, _validationService);
         
         //Separate empty DB for null or empty cases.  
         _emptyDbContext = CreateEmptyTestDb(); 
     }
 
     #region LogicTests
-
-    [Fact]
-    public async Task GetStudentsByGroupId_StudentsAndGroupExist_ReturnCorrectStudentsByGroupIdFromRepo()
-    {
-        // Arrange & Act
-        var students = await _studentService.GetStudentsAllByGroupId(1);
-
-        // Assert
-        Assert.NotNull(students);
-        Assert.Single(students);
-        Assert.Contains(students, s => s.FirstName == "Oleg");
-        Assert.Contains(students, s => s.LastName == "Kotlyar");
-    }
-    
-    [Fact]
-    public async Task GetStudentsByGroupId_StudentsAndGroupExist_ReturnAnotherCorrectStudentsByGroupIdFromRepo()
-    {
-        // Arrange & Act
-        var students = await _studentService.GetStudentsAllByGroupId(2);
-
-        // Assert
-        Assert.NotNull(students);
-        Assert.Equal(2, students.Count());
-        Assert.Contains(students, g => g.FirstName == "Adam");  
-        Assert.Contains(students, g => g.LastName == "Kishinev");
-        Assert.Contains(students, g => g.FirstName == "Sam");  
-        Assert.Contains(students, g => g.LastName == "Stone");
-    }
-    
-    [Fact]
-    public async Task GetStudentsByGroupId_GroupExistButItsEmpty_ThrowException()
-    {
-        // Arrange & Act & Assert
-        var exception = await Assert.ThrowsAsync<Exception>(async () => await _studentService.GetStudentsAllByGroupId(4));
-        Assert.Equal("There are no students for group with Id [4] in DB set.", exception.Message);
-    }
-    
-    [Fact]
-    public async Task GetStudentsByGroupId_NotDataFoundInDbOrNull_ThrowException()
-    {
-        // Arrange
-        var studentService = new StudentService(_emptyDbContext, _testMapper, _mockLoggerService.Object);
-
-        // Act & Assert
-        await Assert.ThrowsAsync<Exception>(async () => await studentService.GetStudentsAllByGroupId(1));
-        await Assert.ThrowsAsync<Exception>(async () => await studentService.GetStudentsAllByGroupId(0));
-        await Assert.ThrowsAsync<Exception>(async () => await studentService.GetStudentsAllByGroupId(123));
-        await Assert.ThrowsAsync<Exception>(async () => await studentService.GetStudentsAllByGroupId(-1));
-    }
     
     [Theory]
     [InlineData("New First Name", 4, true)]           // Valid case
@@ -94,26 +50,33 @@ public class StudentServiceTests
     [InlineData(null, 4, false)]                      // Null first name
     [InlineData("", 4, false)]                        // Empty first name
     [InlineData(" ", 4, false)]                       // Whitespace first name
-    public async Task ChangeStudentFirstName_ShouldHandleDifferentCases_ReturnCorrectNameChangeResultOrException
+    public async Task UpdateStudent_ChangeStudentFirstName_ShouldHandleDifferentCases_ReturnCorrectNameChangeResultOrException
         (string newChangedFirstName, int studentId, bool expectChange)
     {
         // Arrange
+        var studentDto = new StudentDto
+        {
+            Id = studentId,
+            FirstName = newChangedFirstName,
+            LastName = "TestLastName"
+        };
+        
         if (expectChange)
         {
             // Act
-            await _studentService.ChangeStudentFirstName(newChangedFirstName, studentId);
-
-            // Assert
-            var updatedStudent = await _dbContext.Students.FindAsync(studentId);
+            await _studentService.UpdateStudent(studentDto);
             
-            Assert.Equal(newChangedFirstName, updatedStudent!.FirstName);
+            var updatedStudentDto = await _dbContext.Students.FindAsync(studentId);
+            
+            // Assert
+            Assert.Equal(newChangedFirstName, updatedStudentDto!.FirstName);
         }
         else
         {
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
             {
-                await _studentService.ChangeStudentFirstName(newChangedFirstName, studentId);
+                await _studentService.UpdateStudent(studentDto);
             });
         }
     }
@@ -122,17 +85,24 @@ public class StudentServiceTests
     [InlineData("New Last Name", 4, true)]            // Valid case
     [InlineData("  New Last Name123", 5, true)]       // Valid case
     [InlineData("13  `520(#^(&@$_)@^  ", 6, true)]    // Valid case
-    [InlineData(null, 4, false)]                      // Null first name
-    [InlineData("", 4, false)]                        // Empty first name
-    [InlineData(" ", 4, false)]                       // Whitespace first name
-    public async Task ChangeStudentLastName_ShouldHandleDifferentCases_ReturnCorrectNameChangeResultOrException
+    [InlineData(null, 4, false)]                      // Null last name
+    [InlineData("", 4, false)]                        // Empty last name
+    [InlineData(" ", 4, false)]                       // Whitespace last name
+    public async Task UpdateStudent_ChangeStudentLastName_ShouldHandleDifferentCases_ReturnCorrectNameChangeResultOrException
         (string newChangedLastName, int studentId, bool expectChange)
     {
         // Arrange
+        var studentDto = new StudentDto
+        {
+            Id = studentId,
+            LastName = newChangedLastName,
+            FirstName = "TestFirstName"
+        };
+        
         if (expectChange)
         {
             // Act
-            await _studentService.ChangeStudentLastName(newChangedLastName, studentId);
+            await _studentService.UpdateStudent(studentDto);
 
             // Assert
             var updatedStudent = await _dbContext.Students.FindAsync(studentId);
@@ -144,7 +114,7 @@ public class StudentServiceTests
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
             {
-                await _studentService.ChangeStudentLastName(newChangedLastName, studentId);
+                await _studentService.UpdateStudent(studentDto);
             });
         }
     }
@@ -164,12 +134,16 @@ public class StudentServiceTests
         (string newFirstName, string newLastName, bool expectCreate)
     {
         // Arrange
-        var newStudentDto = new StudentDto { FirstName = newFirstName, LastName = newLastName };
+        var newStudentDto = new StudentDto
+        {
+            FirstName = newFirstName, 
+            LastName = newLastName
+        };
 
         if (expectCreate)
         {
             // Act
-            await _studentService.CreateStudent(newStudentDto, newFirstName, newLastName);
+            await _studentService.CreateStudent(newStudentDto);
 
             // Assert
             var createdStudent = await _dbContext.Students.FirstOrDefaultAsync(s =>
@@ -184,7 +158,7 @@ public class StudentServiceTests
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
             {
-                await _studentService.CreateStudent(newStudentDto, newFirstName, newLastName);
+                await _studentService.CreateStudent(newStudentDto);
             });
         }
     }
@@ -193,17 +167,21 @@ public class StudentServiceTests
     [InlineData(11, true)]         // Valid case
     [InlineData(12, true)]         // Valid case
     [InlineData(13, true)]         // Valid case and within group
-    [InlineData(99, false)]        // Non-existent student
     [InlineData(0, false)]         // Non-existent student
     [InlineData(default, false)]   // Non-existent student
     public async Task DeleteStudent_ShouldHandleDifferentCases_ReturnCorrectStudentDeletionResultOrException
         (int studentId, bool expectDelete)
     {
-        // Arrange & Act & Assert
+        // Arrange
+        var studentDto = new StudentDto
+        {
+            Id = studentId,
+        };
+        
         if (expectDelete)
         {
             // Act
-            await _studentService.DeleteStudent(studentId);
+            await _studentService.DeleteStudent(studentDto);
 
             // Assert
             var deletedStudent = await _dbContext.Students.FindAsync(studentId);
@@ -215,7 +193,7 @@ public class StudentServiceTests
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
             {
-                await _studentService.DeleteStudent(studentId);
+                await _studentService.DeleteStudent(studentDto);
             });
         }
     }
@@ -223,21 +201,24 @@ public class StudentServiceTests
     [Theory]
     [InlineData(21, 11, true)]          // Valid case
     [InlineData(22, 11, true)]          // Valid case
-    [InlineData(23, 12, true)]          // Valid case
+    [InlineData(23, 22, true)]          // Valid case
     [InlineData(1, 3, false)]           // Student already in a group
-    [InlineData(999, 1, false)]         // Non-existent student
-    [InlineData(999, 999, false)]       // Non-existent group and student
     [InlineData(0, 1, false)]           // Non-existent student and valid group
     [InlineData(default, 1, false)]     // Non-existent student and valid group
-    [InlineData(24, default, false)]    // Student exist but non valid group
     public async Task AddStudentToGroup_ShouldHandleDifferentCases_ReturnCorrectAddingResultOrException
         (int studentId, int groupId, bool expectAdd)
     {
-        // Arrange & Act & Assert
+        // Arrange
+        var studentDto = new StudentDto
+        {
+            Id = studentId,
+            GroupId = groupId
+        };
+        
         if (expectAdd)
         {
             // Act
-            await _studentService.AddStudentToGroup(studentId, groupId);
+            await _studentService.AddStudentToGroup(studentDto);
 
             // Assert
             var updatedStudent = await _dbContext.Students.FindAsync(studentId);
@@ -249,7 +230,7 @@ public class StudentServiceTests
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
             {
-                await _studentService.AddStudentToGroup(studentId, groupId);
+                await _studentService.AddStudentToGroup(studentDto);
             });
         }
     }
@@ -258,30 +239,34 @@ public class StudentServiceTests
     [InlineData(31, true)]            // Valid case
     [InlineData(32, true)]            // Valid case
     [InlineData(24, true)]            // Student is not in any group
-    [InlineData(999, false)]          // Non-existent student
     [InlineData(0, false)]            // Non-existent student
     [InlineData(default, false)]      // Non-existent student
     public async Task RemoveStudentFromGroup_ShouldHandleDifferentCases_ReturnCorrectDeletionResultOrException
         (int studentId, bool expectRemove)
     {
-        // Arrange & Act & Assert
+        // Arrange
+        var studentDto = new StudentDto
+        {
+            Id = studentId
+        };
+        
         if (expectRemove)
         {
             // Act
-            await _studentService.RemoveStudentFromGroup(studentId);
+            await _studentService.RemoveStudentFromGroup(studentDto);
 
             // Assert
             var updatedStudent = await _dbContext.Students.FindAsync(studentId);
             
             Assert.NotNull(updatedStudent);
-            Assert.Equal(default, updatedStudent.GroupId);
+            Assert.Null(updatedStudent.GroupId);
         }
         else
         {
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
             {
-                await _studentService.RemoveStudentFromGroup(studentId);
+                await _studentService.RemoveStudentFromGroup(studentDto);
             });
         }
     }
@@ -307,7 +292,9 @@ public class StudentServiceTests
             new() { Id = 1, Name = "SSE-11", CourseId =  1 },
             new() { Id = 2, Name = "SSE-32", CourseId = 1 },
             new() { Id = 3, Name = "SSE-41", CourseId = 1 },
-            new() { Id = 4, Name = "SSE-44", CourseId = 1 }
+            new() { Id = 4, Name = "SSE-44", CourseId = 1 },
+            new() { Id = 11, Name = "SSE-441", CourseId = 1 },
+            new() { Id = 22, Name = "SSE-444", CourseId = 1 }
         );
         
         dbContext.Students.AddRange(

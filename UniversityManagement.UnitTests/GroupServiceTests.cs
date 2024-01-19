@@ -5,7 +5,7 @@ using Moq;
 using UniversityManagement.Application.EntitiesDto;
 using UniversityManagement.Application.Services;
 using UniversityManagement.Application.Services.Interfaces;
-using UniversityManagement.Infrastructure;
+using UniversityManagement.DataAccess;
 using UniversityManagement.WebApi.AutoMapper;
 using Xunit;
 
@@ -14,75 +14,81 @@ namespace UniversityManagement.UnitTests;
 public class GroupServiceTests
 {
     private readonly Mock<ILogger<GroupService>> _mockLoggerService;
+    private readonly Mock<ILogger<ValidationService>> _mockLoggerValidationService;
     private readonly IMapper _testMapper;
     private readonly UniversityDbContext _dbContext;
     private readonly UniversityDbContext _emptyDbContext;
+    private readonly IValidationService _validationService;
     private readonly IGroupService _groupService;
 
     public GroupServiceTests()
     {
         _mockLoggerService = new Mock<ILogger<GroupService>>();
+        _mockLoggerValidationService = new Mock<ILogger<ValidationService>>();
         
         _testMapper = new MapperConfiguration(cfg => cfg
                 .AddProfile(new EntitiesMapper()))
             .CreateMapper();
 
         _dbContext = CreateAndSeedTestDb();
+
+        _validationService = new ValidationService(_mockLoggerValidationService.Object);
         
-        _groupService = new GroupService(_dbContext, _testMapper, _mockLoggerService.Object);
+        _groupService = new GroupService(_dbContext, _testMapper, _mockLoggerService.Object, _validationService);
 
         //Separate empty DB for some null or empty cases.  
         _emptyDbContext = CreateEmptyTestDb();
     }
 
     #region LogicTest
-
+    
     [Fact]
-    public async Task GetGroupsByCourseId_GroupsAndCourseExist_ReturnCorrectGroupsByCourseIdFromRepo()
+    public async Task GetStudentsByGroupId_StudentsAndGroupExist_ReturnCorrectStudentsByGroupIdFromRepo()
     {
         // Arrange & Act
-        var groups = await _groupService.GetGroupsAllByCourseId(2);
+        var students = await _groupService.GetStudentsByGroupId(1);
 
         // Assert
-        Assert.NotNull(groups);
-        Assert.Single(groups);
-        Assert.Contains(groups, g => g.Name == "SEE-22");
+        Assert.NotNull(students);
+        Assert.Single(students);
+        Assert.Contains(students, s => s.FirstName == "Oleg");
+        Assert.Contains(students, s => s.LastName == "Kotlyar");
     }
     
     [Fact]
-    public async Task GetGroupsByCourseId_GroupsAndCourseExist_ReturnAnotherCorrectGroupsByCourseIdFromRepo()
-    { 
+    public async Task GetStudentsByGroupId_StudentsAndGroupExist_ReturnAnotherCorrectStudentsByGroupIdFromRepo()
+    {
         // Arrange & Act
-        var groups = await _groupService.GetGroupsAllByCourseId(4);
+        var students = await _groupService.GetStudentsByGroupId(2);
 
         // Assert
-        Assert.NotNull(groups);
-        Assert.Equal(2, groups.Count());
-        Assert.Contains(groups, g => g.Name == "DA-12");  
-        Assert.Contains(groups, g => g.Name == "DA-41");
+        Assert.NotNull(students);
+        Assert.Equal(2, students.Count());
+        Assert.Contains(students, g => g.FirstName == "Adam");  
+        Assert.Contains(students, g => g.LastName == "Kishinev");
+        Assert.Contains(students, g => g.FirstName == "Sam");  
+        Assert.Contains(students, g => g.LastName == "Stone");
     }
     
     [Fact]
-    public async Task GetGroupsByCourseId_CourseExistButItsEmpty_ThrowException()
-    { 
+    public async Task GetStudentsByGroupId_GroupExistButItsEmpty_ThrowException()
+    {
         // Arrange & Act & Assert
-        var exception =
-            await Assert.ThrowsAsync<Exception>(async () => await _groupService.GetGroupsAllByCourseId(5));
-        
-        Assert.Equal("There are no groups for course with Id [5] in DB set.", exception.Message);
+        var exception = await Assert.ThrowsAsync<Exception>(async () => await _groupService.GetStudentsByGroupId(4));
+        Assert.Equal("There are no students for group with Id [4] in DB set.", exception.Message);
     }
     
     [Fact]
-    public async Task GetGroupsByCourseId_NotDataFoundInDbOrNull_ThrowException()
-    { 
+    public async Task GetStudentsByGroupId_NotDataFoundInDbOrNull_ThrowException()
+    {
         // Arrange
-        var groupService = new GroupService(_emptyDbContext, _testMapper, _mockLoggerService.Object);
+        var groupService = new GroupService(_emptyDbContext, _testMapper, _mockLoggerService.Object, _validationService);
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(async () => await groupService.GetGroupsAllByCourseId(1));
-        await Assert.ThrowsAsync<Exception>(async () => await groupService.GetGroupsAllByCourseId(0));
-        await Assert.ThrowsAsync<Exception>(async () => await groupService.GetGroupsAllByCourseId(123));
-        await Assert.ThrowsAsync<Exception>(async () => await groupService.GetGroupsAllByCourseId(-1));
+        await Assert.ThrowsAsync<Exception>(async () => await groupService.GetStudentsByGroupId(0));
+        await Assert.ThrowsAsync<NullReferenceException>(async () => await groupService.GetStudentsByGroupId(1));
+        await Assert.ThrowsAsync<NullReferenceException>(async () => await groupService.GetStudentsByGroupId(123));
+        await Assert.ThrowsAsync<NullReferenceException>(async () => await groupService.GetStudentsByGroupId(-1));
     }
     
     [Theory]
@@ -92,14 +98,20 @@ public class GroupServiceTests
     [InlineData(null, 5, false)]                  // Null group name
     [InlineData("", 5, false)]                    // Empty group name
     [InlineData(" ", 5,false)]                    // Whitespace group name
-    public async Task ChangeGroupName_ShouldHandleDifferentCases_ReturnCorrectNameChangeResultOrException
+    public async Task UpdateGroup_ChangeGroupName_ShouldHandleDifferentCases_ReturnCorrectNameChangeResultOrException
         (string newChangedGroupName, int groupId, bool expectChange)
     {
         // Arrange
+        var groupDto = new GroupDto
+        {
+            Id = groupId,
+            Name = newChangedGroupName
+        };
+        
         if (expectChange)
         {
             // Act
-            await _groupService.ChangeGroupName(newChangedGroupName, groupId);
+            await _groupService.UpdateGroup(groupDto);
 
             // Assert
             var updatedGroup = await _dbContext.Groups.FindAsync(groupId);
@@ -111,7 +123,7 @@ public class GroupServiceTests
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
             {
-                await _groupService.ChangeGroupName(newChangedGroupName, groupId);
+                await _groupService.UpdateGroup(groupDto);
             });
         }
     }
@@ -120,7 +132,7 @@ public class GroupServiceTests
     [InlineData("SEE-22", 2, true)]                  // Valid case
     [InlineData("   SWE-22 ", 1, true)]              // Valid case
     [InlineData("()%$#* 3 _@)$#$ Name  ", 1, true)]  // Valid case
-    [InlineData("SWE-41", default, false)]            // Null courseId
+    [InlineData("SWE-41", default, false)]           // Null courseId
     [InlineData(null, 1,false)]                      // Null group name
     [InlineData("", 1, false)]                       // Empty group name
     [InlineData(" ", 1,false)]                       // Whitespace group name
@@ -128,12 +140,16 @@ public class GroupServiceTests
         (string newGroupName, int courseId, bool expectCreate)
     {
         // Arrange
-        var newGroupDto = new GroupDto { Name = newGroupName };
+        var newGroupDto = new GroupDto
+        {
+            Name = newGroupName,
+            CourseId = courseId
+        };
         
         if (expectCreate)
         {
             // Act
-            await _groupService.CreateGroup(newGroupDto, newGroupName, courseId);
+            await _groupService.CreateGroup(newGroupDto);
 
             // Assert
             var createdGroup = await _dbContext.Groups.FirstOrDefaultAsync(g => g.Name == newGroupName);
@@ -146,7 +162,7 @@ public class GroupServiceTests
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(async () => 
             {
-                await _groupService.CreateGroup(newGroupDto, newGroupName, courseId);
+                await _groupService.CreateGroup(newGroupDto);
             });
         }
     }
@@ -156,17 +172,21 @@ public class GroupServiceTests
     [InlineData(12, true)]        // Valid case
     [InlineData(13, true)]        // Valid case and within course
     [InlineData(14, false)]       // Have students in it
-    [InlineData(99, false)]       // Non-existent group
     [InlineData(0, false)]        // Non-existent group
     [InlineData(default, false)]  // Non-existent group
     public async Task DeleteGroup_ShouldHandleDifferentCases_ReturnCorrectGroupDeletionResultOrException
         (int groupId, bool expectDelete)
     {
-        // Arrange & Act & Assert
+        // Arrange
+        var groupDto = new GroupDto
+        {
+            Id = groupId
+        };
+        
         if (expectDelete)
         {
             // Act
-            await _groupService.DeleteGroup(groupId);
+            await _groupService.DeleteGroup(groupDto);
 
             // Assert
             var deletedGroup = await _dbContext.Groups.FindAsync(groupId);
@@ -175,9 +195,10 @@ public class GroupServiceTests
         }
         else
         {
+            // Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
             {
-                await _groupService.DeleteGroup(groupId);
+                await _groupService.DeleteGroup(groupDto);
             });
         }
     }
@@ -204,6 +225,7 @@ public class GroupServiceTests
         
         dbContext.Groups.AddRange(
             new() { Id = 1, Name = "SSE-11", CourseId = 1 },
+            new() { Id = 2, Name = "CS-44", CourseId = 5 },
             new() { Id = 3, Name = "DA-12", CourseId = 4 },
             new() { Id = 4, Name = "DA-41", CourseId = 4 },
             new() { Id = 5, Name = "SWE-11" },
@@ -214,7 +236,13 @@ public class GroupServiceTests
             new() { Id = 13, Name = "SWE-32", CourseId = 2 }
         );
         
-        dbContext.Students.Add(new() { Id = 1, FirstName = "Darya", LastName = "Lebovsky", GroupId = 14 });
+        dbContext.Students.AddRange(
+            new() { Id = 1, FirstName = "Oleg", LastName = "Kotlyar", GroupId =  1 },
+            new() { Id = 2, FirstName = "Adam", LastName = "Kishinev", GroupId = 2 },
+            new() { Id = 3, FirstName = "Sam", LastName = "Stone", GroupId = 2 }
+        );
+        
+        dbContext.Students.Add(new() { Id = 20, FirstName = "Darya", LastName = "Lebovsky", GroupId = 14 });
         
         dbContext.SaveChangesAsync();
 

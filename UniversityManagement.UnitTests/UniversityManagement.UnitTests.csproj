@@ -29,7 +29,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\UniversityManagement.Application\UniversityManagement.Application.csproj" />
-      <ProjectReference Include="..\UniversityManagement.Infrastructure\UniversityManagement.Infrastructure.csproj" />
+      <ProjectReference Include="..\UniversityManagement.DataAccess\UniversityManagement.DataAccess.csproj" />
       <ProjectReference Include="..\UniversityManagement.WebApi\UniversityManagement.WebApi.csproj" />
     </ItemGroup>
 
