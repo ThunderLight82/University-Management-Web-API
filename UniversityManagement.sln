@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityManagement.UnitTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityManagement.Domain", "UniversityManagement.Domain\UniversityManagement.Domain.csproj", "{EA81AC98-9FB6-47E6-B442-2C30A17F7315}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityManagement.Infrastructure", "UniversityManagement.Infrastructure\UniversityManagement.Infrastructure.csproj", "{E7D9615D-9A34-4005-B8AF-4679DD4B7405}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityManagement.DataAccess", "UniversityManagement.DataAccess\UniversityManagement.DataAccess.csproj", "{E7D9615D-9A34-4005-B8AF-4679DD4B7405}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityManagement.Application", "UniversityManagement.Application\UniversityManagement.Application.csproj", "{B8CA8FDF-72FF-455F-8408-A07627061678}"
 EndProject
