@@ -1,0 +1,43 @@
+﻿<div class="container py-1">
+    <div class="row justify-content-center">
+        <div class="column">
+            <form method="post">
+                
+                <div class="panel-heading">
+                    <h3 class="panel-title">Create Student</h3>
+                </div>
+
+                <div class="form-student">
+
+                    <label for="newStudentFirstName" style="margin-right: 10px; margin-bottom: 5px; margin-top: 10px;">
+                        <b>Enter first name:</b>
+                    </label>
+                    <input type="text" class="form-control form-control-sm" style="width: 250px" id="newStudentFirstName" name="FirstName" required>
+
+                    <label for="newStudentLastName" style="margin-right: 10px; margin-bottom: 5px;">
+                        <b>Enter last name:</b>
+                    </label>
+                    <input type="text" class="form-control form-control-sm" style="width: 250px" id="newStudentLastName" name="LastName" required>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-sm" style="margin-top: 15px;">Create New Student</button>
+
+                @if (ViewBag.SuccessMessage != null)
+                {
+                    <div class="alert alert-success" style="margin-top: 15px;">
+                        @ViewBag.SuccessMessage
+                    </div>
+                }
+
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger" style="margin-top: 15px;">
+                        @ViewBag.ErrorMessage
+                    </div>
+                }
+
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+﻿<div class="container py-1">
+    <div class="row justify-content-center">
+        <div class="column">
+            <form method="post">
+                
+                <div class="panel-heading">
+                    <h3 class="panel-title">Delete Student</h3>
+                    </div>
+
+                <div class="students mb-2">
+                    <label for="studentId" style="margin-right: 10px; margin-bottom: 5px; margin-top: 10px">
+                        <b>Select a student to delete:</b>
+                    </label>
+
+                    <select class="form-control" style="width: 250px;" id="studentId" name="Id">
+                        @if (ViewBag.StudentsList != null)
+                        {
+                            foreach (var student in ViewBag.StudentsList)
+                            {
+                                <option value="@student.Id">@($"{student.FirstName} {student.LastName}")</option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="">No students available</option>
+                        }
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-sm" style="margin-top: 10px;">Delete Student</button>
+
+                @if (ViewBag.SuccessMessage != null)
+                {
+                    <div class="alert alert-success" style="margin-top: 15px;">
+                        @ViewBag.SuccessMessage
+                    </div>
+                }
+
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger" style="margin-top: 15px;">
+                        @ViewBag.ErrorMessage
+                    </div>
+                }
+
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+﻿@model IEnumerable<UniversityManagement.Application.EntitiesDto.GroupDto>
+
+<div class="home-container">
+    
+    <div class="groups-list">
+        <h2>Groups</h2>
+        <ul>
+            @foreach (var group in Model)
+            {
+                <li>
+                    <a href="@Url.Action("GetStudents", "Home", new { groupId = group.Id })">@group.Name</a>
+                </li>
+            }
+        </ul>
+    </div>
+    
+</div>
