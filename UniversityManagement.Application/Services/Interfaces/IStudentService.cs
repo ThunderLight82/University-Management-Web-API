@@ -6,13 +6,10 @@ namespace UniversityManagement.Application.Services.Interfaces;
 public interface IStudentService : IBaseService<Student>
 {
     Task<StudentDto> GetStudentById(int studentId);
-    Task<IEnumerable<StudentDto>> GetStudentsAll();
-    Task<IEnumerable<StudentDto>> GetStudentsAllWithGroupName();
-    Task<IEnumerable<StudentDto>> GetStudentsAllByGroupId(int groupId);
-    Task<StudentDto> ChangeStudentFirstName(string newChangedFirstName, int studentId);
-    Task<StudentDto> ChangeStudentLastName(string newChangedLastName, int studentId);
-    Task<StudentDto> CreateStudent(StudentDto newStudentDto, string newStudentFirstName, string newStudentLastName);
-    Task DeleteStudent(int studentId);
-    Task AddStudentToGroup(int studentId, int groupId);
-    Task RemoveStudentFromGroup(int studentId);
+    Task<IEnumerable<StudentDto>> GetStudents();
+    Task<StudentDto> UpdateStudent(StudentDto studentDto);
+    Task<StudentDto> CreateStudent(StudentDto newStudentDto);
+    Task DeleteStudent(StudentDto studentDto);
+    Task AddStudentToGroup(StudentDto studentDto);
+    Task RemoveStudentFromGroup(StudentDto studentDto);
 }

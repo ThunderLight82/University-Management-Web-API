@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\UniversityManagement.Infrastructure\UniversityManagement.Infrastructure.csproj" />
+      <ProjectReference Include="..\UniversityManagement.DataAccess\UniversityManagement.DataAccess.csproj" />
     </ItemGroup>
 
 </Project>

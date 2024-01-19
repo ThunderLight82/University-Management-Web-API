@@ -5,6 +5,7 @@ namespace UniversityManagement.Application.Services.Interfaces;
 
 public interface ICourseService : IBaseService<Course>
 {
-    Task<CourseDto> GetCourseById(int id);
-    Task<IEnumerable<CourseDto>> GetCoursesAll();
+    Task<CourseDto> GetCourseById(int courseId);
+    Task<IEnumerable<CourseDto>> GetCourses();
+    Task<IEnumerable<GroupDto>> GetGroupsByCourseId(int courseId);
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UniversityManagement.Application.Services.Interfaces;
 using UniversityManagement.Domain.Entities;
-using UniversityManagement.Infrastructure;
+using UniversityManagement.DataAccess;
 
 namespace UniversityManagement.Application.Services;
 
@@ -26,10 +26,8 @@ public abstract class BaseService<TBaseEntity> : IBaseService<TBaseEntity> where
         await _dbContext.SaveChangesAsync();
     }
 
-    public virtual async Task Delete(int id)
+    public virtual async Task Delete(TBaseEntity entity)
     {
-        var entity = await GetById(id);
-        
         _dbContext.Set<TBaseEntity>().Remove(entity);
         await _dbContext.SaveChangesAsync();
     }
