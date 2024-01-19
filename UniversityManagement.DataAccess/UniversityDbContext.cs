@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UniversityManagement.Domain.Entities;
 
-namespace UniversityManagement.Infrastructure;
+namespace UniversityManagement.DataAccess;
 
 public class UniversityDbContext : DbContext
 {

@@ -4,7 +4,7 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace UniversityManagement.Infrastructure.Migrations
+namespace UniversityManagement.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class InitialTablesCreation : Migration

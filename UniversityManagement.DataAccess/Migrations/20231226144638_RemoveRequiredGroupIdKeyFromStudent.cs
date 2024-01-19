@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace UniversityManagement.Infrastructure.Migrations
+namespace UniversityManagement.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class RemoveRequiredGroupIdKeyFromStudent : Migration

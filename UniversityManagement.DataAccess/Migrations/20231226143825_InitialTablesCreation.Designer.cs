@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using UniversityManagement.Infrastructure;
+using UniversityManagement.DataAccess;
 
 #nullable disable
 
-namespace UniversityManagement.Infrastructure.Migrations
+namespace UniversityManagement.DataAccess.Migrations
 {
     [DbContext(typeof(UniversityDbContext))]
     [Migration("20231226143825_InitialTablesCreation")]

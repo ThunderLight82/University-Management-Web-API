@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using UniversityManagement.Infrastructure;
+using UniversityManagement.DataAccess;
 
 #nullable disable
 
-namespace UniversityManagement.Infrastructure.Migrations
+namespace UniversityManagement.DataAccess.Migrations
 {
     [DbContext(typeof(UniversityDbContext))]
     partial class UniversityDbContextModelSnapshot : ModelSnapshot
