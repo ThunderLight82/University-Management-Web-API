@@ -15,36 +15,26 @@ public class StudentController : Controller
         _groupService = groupService;
     }
     
-    //GET [EDIT STUDENT]
+    //GET [UPDATE STUDENT]
     [HttpGet]
-    public async Task<IActionResult>EditStudent()
+    public async Task<IActionResult>UpdateStudent()
     {
-        ViewBag.StudentsList = await _studentService.GetStudentsAll();
+        ViewBag.StudentsList = await _studentService.GetStudents();
         
         return View();
     }
     
-    //ADDITIONAL GET [EDIT STUDENT]
-    [HttpGet]
-    public async Task<IActionResult>GetStudentNameDetails(int studentId)
-    {
-        var studentDetails = await _studentService.GetStudentById(studentId);
-        
-        return Json(new { firstName = studentDetails.FirstName, lastName = studentDetails.LastName });
-    }
-    
-    //POST [EDIT STUDENT]
+    //POST [UPDATE STUDENT]
     [HttpPost]
-    public async Task<IActionResult> EditStudent(string newChangedFirstName, string newChangedLastName, int studentId)
+    public async Task<IActionResult> UpdateStudent(StudentDto studentDto)
     {
         try
         {
-            await _studentService.ChangeStudentFirstName(newChangedFirstName, studentId);
-            await _studentService.ChangeStudentLastName(newChangedLastName, studentId);
+            await _studentService.UpdateStudent(studentDto);
             
-            ViewBag.StudentsList = await _studentService.GetStudentsAll();
+            ViewBag.StudentsList = await _studentService.GetStudents();
                     
-            ViewBag.SuccessMessage = $"Selected student name changed successfully to '{newChangedFirstName} " + $"{newChangedLastName}'.";
+            ViewBag.SuccessMessage = $"Selected student name changed successfully to '{studentDto.FirstName} " + $"{studentDto.LastName}'.";
             
             return View();
         }
@@ -65,13 +55,13 @@ public class StudentController : Controller
     
     //POST [CREATE STUDENT]
     [HttpPost]
-    public async Task<IActionResult> CreateStudent(StudentDto newStudentDto, string newStudentFirstName, string newStudentLastName)
+    public async Task<IActionResult> CreateStudent(StudentDto newStudentDto)
     {
         try
         {
-            await _studentService.CreateStudent(newStudentDto, newStudentFirstName, newStudentLastName);
+            await _studentService.CreateStudent(newStudentDto);
             
-            ViewBag.SuccessMessage = $"New student with name '{newStudentFirstName} " + $"{newStudentLastName}' is successfully created.";
+            ViewBag.SuccessMessage = $"New student with name '{newStudentDto.FirstName} " + $"{newStudentDto.LastName}' is successfully created.";
             
             return View();
         }
@@ -87,28 +77,28 @@ public class StudentController : Controller
     [HttpGet]
     public async Task<IActionResult> DeleteStudent()
     { 
-        ViewBag.StudentsList = await _studentService.GetStudentsAll();
+        ViewBag.StudentsList = await _studentService.GetStudents();
         
         return View();
     }
     
     //POST [DELETE STUDENT]
     [HttpPost]
-    public async Task<IActionResult> DeleteStudent(int studentId)
+    public async Task<IActionResult> DeleteStudent(StudentDto studentDto)
     {
         try
         {
-            await _studentService.DeleteStudent(studentId);
+            await _studentService.DeleteStudent(studentDto);
             
-            ViewBag.StudentsList = await _studentService.GetStudentsAll();
+            ViewBag.StudentsList = await _studentService.GetStudents();
             
-            ViewBag.SuccessMessage = $"student with Id [{studentId}] is successfully deleted.";
+            ViewBag.SuccessMessage = $"student with Id [{studentDto.Id}] is successfully deleted.";
             
             return View();
         }
         catch (Exception ex)
         {
-            ViewBag.StudentsList = await _studentService.GetStudentsAll();
+            ViewBag.StudentsList = await _studentService.GetStudents();
             
             ViewBag.ErrorMessage = $"An error occurred: {ex.Message}";
             
@@ -120,44 +110,68 @@ public class StudentController : Controller
     [HttpGet]
     public async Task<IActionResult> ManageStudentsGroup()
     {
-        var studentsWithGroupName = await _studentService.GetStudentsAllWithGroupName();
+        var students = await _studentService.GetStudents();
         
-        ViewBag.GroupsList = await _groupService.GetGroupsAll();
+        ViewBag.GroupsList = await _groupService.GetGroups();
         
-        return View(studentsWithGroupName);
+        return View(students);
     }
     
-    //POST [MANAGE STUDENTS GROUP]
+    //POST [MANAGE STUDENTS GROUP - ADD STUDENT TO GROUP]
     [HttpPost]
-    public async Task<IActionResult> ManageStudentsGroup(int studentId, int groupId, string buttonAction)
+    public async Task<IActionResult> AddStudentToGroup(StudentDto studentDto)
     {
         try
         {
-            switch (buttonAction)
-            {
-                case"addStudentToGroup":
-                    await _studentService.AddStudentToGroup(studentId, groupId);
-                    break;
-                
-                case "removeStudentFromGroup":
-                    await _studentService.RemoveStudentFromGroup(studentId);
-                    break;
-            }
+            await _studentService.AddStudentToGroup(studentDto);
+
+            var students = await _studentService.GetStudents();
             
-            var students = await _studentService.GetStudentsAll();
+            ViewBag.GroupsList = await _groupService.GetGroups();
             
-            ViewBag.GroupsList = await _groupService.GetGroupsAll();
-            
-            return View(students);
+            return View("ManageStudentsGroup", students);
         }
         catch (Exception)
         {
-            var students = await _studentService.GetStudentsAll();
+            var students = await _studentService.GetStudents();
 
-            ViewBag.GroupsList = await _groupService.GetGroupsAll();
+            ViewBag.GroupsList = await _groupService.GetGroups();
 
-            return View(students);
+            return View("ManageStudentsGroup", students);
         }
+    }
+    
+    //POST [MANAGE STUDENTS GROUP - REMOVE STUDENT FROM GROUP]
+    [HttpPost]
+    public async Task<IActionResult> RemoveStudentFromGroup(StudentDto studentDto)
+    {
+        try
+        {
+            await _studentService.RemoveStudentFromGroup(studentDto);
+            
+            var students = await _studentService.GetStudents();
+            
+            ViewBag.GroupsList = await _groupService.GetGroups();
+            
+            return View("ManageStudentsGroup", students);
+        }
+        catch (Exception)
+        {
+            var students = await _studentService.GetStudents();
+
+            ViewBag.GroupsList = await _groupService.GetGroups();
+
+            return View("ManageStudentsGroup", students);
+        }
+    }
+    
+    //ADDITIONAL GET
+    [HttpGet]
+    public async Task<IActionResult> GetStudentNameDetails(int studentId)
+    {
+        var studentDetails = await _studentService.GetStudentById(studentId);
+        
+        return Json(new { firstName = studentDetails.FirstName, lastName = studentDetails.LastName });
     }
 }
 

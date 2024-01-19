@@ -15,41 +15,32 @@ public class GroupController : Controller
         _courseService = courseService;
     }
     
-    //GET [EDIT GROUP]
+    //GET [UPDATE GROUP]
     [HttpGet]
-    public async Task<IActionResult> EditGroup()
+    public async Task<IActionResult> UpdateGroup()
     {
-        ViewBag.CourseList = await _courseService.GetCoursesAll();
+        ViewBag.CourseList = await _courseService.GetCourses();
 
         return View();
     }
     
-    //ADDITIONAL GET [EDIT GROUP]
-    [HttpGet]
-    public async Task<IActionResult> GetGroupsByCourseId(int courseId)
-    {
-        var groups = await _groupService.GetGroupsAllByCourseId(courseId);
-        
-        return Json(groups);
-    }
-    
-    //POST [EDIT GROUP]
+    //POST [UPDATE GROUP]
     [HttpPost]
-    public async Task<IActionResult> EditGroup(string newChangedGroupName, int groupId)
+    public async Task<IActionResult> UpdateGroup(GroupDto groupDto)
     {
         try
         {
-            await _groupService.ChangeGroupName(newChangedGroupName, groupId);
+            await _groupService.UpdateGroup(groupDto);
 
-            ViewBag.CourseList = await _courseService.GetCoursesAll();
+            ViewBag.CourseList = await _courseService.GetCourses();
             
-            ViewBag.SuccessMessage = $"Selected group name changed successfully to '{newChangedGroupName}'.";
+            ViewBag.SuccessMessage = $"Selected group name changed successfully to '{groupDto.Name}'.";
             
             return View();
         }
         catch (Exception ex)
         {
-            ViewBag.CourseList = await _courseService.GetCoursesAll();
+            ViewBag.CourseList = await _courseService.GetCourses();
             
             ViewBag.ErrorMessage = $"An error occurred: {ex.Message}";
                 
@@ -61,28 +52,28 @@ public class GroupController : Controller
     [HttpGet]
     public async Task<IActionResult> CreateGroup()
     {
-        ViewBag.CourseList = await _courseService.GetCoursesAll();
+        ViewBag.CourseList = await _courseService.GetCourses();
         
         return View();
     }
     
     //POST [CREATE GROUP]
     [HttpPost]
-    public async Task<IActionResult> CreateGroup(GroupDto newGroupDto, string newGroupName, int courseId)
+    public async Task<IActionResult> CreateGroup(GroupDto newGroupDto)
     {
         try
         {
-            await _groupService.CreateGroup(newGroupDto, newGroupName, courseId);
+            await _groupService.CreateGroup(newGroupDto);
 
-            ViewBag.CourseList = await _courseService.GetCoursesAll();
+            ViewBag.CourseList = await _courseService.GetCourses();
             
-            ViewBag.SuccessMessage = $"New group with name '{newGroupName}' is successfully created within course with Id:[{courseId}]";
+            ViewBag.SuccessMessage = $"New group with name '{newGroupDto.Name}' is successfully created within course with Id:[{newGroupDto.CourseId}]";
             
             return View();
         }
         catch (Exception ex)
         {
-            ViewBag.CourseList = await _courseService.GetCoursesAll();
+            ViewBag.CourseList = await _courseService.GetCourses();
             
             ViewBag.ErrorMessage = $"An error occurred: {ex.Message}";
             return View();
@@ -93,20 +84,20 @@ public class GroupController : Controller
     [HttpGet]
     public async Task<IActionResult> DeleteGroup()
     {
-        ViewBag.CourseList = await _courseService.GetCoursesAll();
+        ViewBag.CourseList = await _courseService.GetCourses();
         
         return View();
     }
     
     //POST [DELETE GROUP]
     [HttpPost]
-    public async Task<IActionResult> DeleteGroup(int groupId)
+    public async Task<IActionResult> DeleteGroup(GroupDto groupDto)
     {
         try
         {
-            await _groupService.DeleteGroup(groupId);
+            await _groupService.DeleteGroup(groupDto);
 
-            ViewBag.CourseList = await _courseService.GetCoursesAll();
+            ViewBag.CourseList = await _courseService.GetCourses();
 
             ViewBag.SuccessMessage = "Selected group was successfully deleted from course.";
             
@@ -114,11 +105,20 @@ public class GroupController : Controller
         }
         catch (Exception ex)
         {
-            ViewBag.CourseList = await _courseService.GetCoursesAll();
+            ViewBag.CourseList = await _courseService.GetCourses();
             
             ViewBag.ErrorMessage = $"An error occurred: {ex.Message}";
                 
             return View();
         }
+    }
+    
+    //ADDITIONAL GET
+    [HttpGet]
+    public async Task<IActionResult> GetGroupsByCourseId(int courseId)
+    {
+        var groups = await _courseService.GetGroupsByCourseId(courseId);
+        
+        return Json(groups);
     }
 }

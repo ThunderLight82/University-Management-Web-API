@@ -1,4 +1,4 @@
-using UniversityManagement.Infrastructure;
+using UniversityManagement.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using UniversityManagement.Application.Services;
@@ -42,6 +42,8 @@ public class Startup
         services.AddScoped<ICourseService, CourseService>();
         services.AddScoped<IGroupService, GroupService>();
         services.AddScoped<IStudentService, StudentService>();
+        
+        services.AddTransient<IValidationService, ValidationService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -66,19 +68,19 @@ public class Startup
         {
             endpoints.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=GetCoursesAll}/{id?}"
+                pattern: "{controller=Home}/{action=GetCourses}/{id?}"
             );
 
             endpoints.MapControllerRoute(
                 name: "Groups",
-                pattern: "Home/GetGroupsAll/{courseId}",
-                defaults: new { controller = "Home", action = "GetGroupsAll" }
+                pattern: "Home/GetGroups/{courseId}",
+                defaults: new { controller = "Home", action = "GetGroups" }
             );
 
             endpoints.MapControllerRoute(
                 name: "Students",
-                pattern: "Home/GetStudentsAll/{groupId}",
-                defaults: new { controller = "Home", action = "GetStudentsAll" }
+                pattern: "Home/GetStudents/{groupId}",
+                defaults: new { controller = "Home", action = "GetStudents" }
             );
         });
         

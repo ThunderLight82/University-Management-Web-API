@@ -8,7 +8,7 @@
             @foreach (var course in Model)
             {
                 <li>
-                    <a href="@Url.Action("GetGroupsAll", "Home", new { courseId = course.Id })">@course.Name</a>
+                    <a href="@Url.Action("GetGroups", "Home", new { courseId = course.Id })">@course.Name</a>
                 </li>
             }
         </ul>

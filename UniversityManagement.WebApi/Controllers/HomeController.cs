@@ -7,36 +7,34 @@ public class HomeController : Controller
 {
     private readonly ICourseService _courseService;
     private readonly IGroupService _groupService;
-    private readonly IStudentService _studentService;
 
-    public HomeController(ICourseService courseService, IGroupService groupService, IStudentService studentService)
+    public HomeController(ICourseService courseService, IGroupService groupService)
     {
         _courseService = courseService;
         _groupService = groupService;
-        _studentService = studentService;
     }
 
     // GET: /Home
     [HttpGet]
-    public async Task<IActionResult> GetCoursesAll(string errorMessage)
+    public async Task<IActionResult> GetCourses(string errorMessage)
     {
         if (!string.IsNullOrEmpty(errorMessage))
         {
             ViewBag.ErrorMessage = errorMessage;
         }
         
-        var courses = await _courseService.GetCoursesAll();
+        var courses = await _courseService.GetCourses();
         
         return View(courses);
     }
 
     // NAV GET: /Home/Groups/{courseId}
     [HttpGet]
-    public async Task<IActionResult> GetGroupsAll(int courseId)
+    public async Task<IActionResult> GetGroups(int courseId)
     {
         try
         {
-            var groups = await _groupService.GetGroupsAllByCourseId(courseId);
+            var groups = await _courseService.GetGroupsByCourseId(courseId);
             
             return View(groups);
         }
@@ -44,17 +42,17 @@ public class HomeController : Controller
         {
              ViewBag.ErrorMessage = $"An error occurred: {ex.Message}";
             
-             return RedirectToAction("GetCoursesAll", "Home", new { errorMessage = ViewBag.ErrorMessage });
+             return RedirectToAction("GetCourses", "Home", new { errorMessage = ViewBag.ErrorMessage });
         }
     }
 
     // NAV GET: /Home/Students/{groupId}
     [HttpGet]
-    public async Task<IActionResult> GetStudentsAll(int groupId)
+    public async Task<IActionResult> GetStudents(int groupId)
     {
         try
         {
-            var students = await _studentService.GetStudentsAllByGroupId(groupId);
+            var students = await _groupService.GetStudentsByGroupId(groupId);
         
             return View(students);
         }
@@ -62,7 +60,7 @@ public class HomeController : Controller
         {
             ViewBag.ErrorMessage = $"An error occurred: {ex.Message}";
             
-            return RedirectToAction("GetCoursesAll", "Home", new { errorMessage = ViewBag.ErrorMessage });
+            return RedirectToAction("GetCourses", "Home", new { errorMessage = ViewBag.ErrorMessage });
         }
     }
 }

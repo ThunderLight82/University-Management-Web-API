@@ -8,7 +8,7 @@
             @foreach (var group in Model)
             {
                 <li>
-                    <a href="@Url.Action("GetStudentsAll", "Home", new { groupId = group.Id })">@group.Name</a>
+                    <a href="@Url.Action("GetStudents", "Home", new { groupId = group.Id })">@group.Name</a>
                 </li>
             }
         </ul>

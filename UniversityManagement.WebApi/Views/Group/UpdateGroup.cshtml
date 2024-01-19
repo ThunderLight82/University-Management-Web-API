@@ -4,13 +4,12 @@
             <form method="post">
                 
                 <div class="panel-heading">
-                    <h3 class="panel-title">Edit Group</h3>
+                    <h3 class="panel-title">Update Group</h3>
                     </div>
-
-
+                
                 <div class="form-group mb-2">
                     <label for="courseId" style="margin-right: 10px; margin-bottom: 5px; margin-top: 10px">
-                        <b>Select a course to edit a group name:</b>
+                        <b>Select a course to change group name:</b>
                     </label>
 
                     <select class="form-control" style="width: 250px;" id="courseId" name="courseId" onchange="getGroups()">
@@ -32,17 +31,17 @@
                     <label for="groupId" style="margin-right: 10px; margin-bottom: 5px;">
                         <b>Select a group:</b>
                     </label>
-                    <select class="form-control" style="width: 250px;" id="groupId" name="groupId"></select>
+                    <select class="form-control" style="width: 250px;" id="groupId" name="GroupDto.Id"></select>
                 </div>
 
                 <div class="form-group">
                     <label for="newChangedGroupName" style="margin-right: 10px; margin-bottom: 5px;">
                         <b>Enter a new Group name</b>:
                     </label>
-                    <input type="text" class="form-control form-control-sm" style="width: 250px" id="newChangedGroupName" name="newChangedGroupName" required>
+                    <input type="text" class="form-control form-control-sm" style="width: 250px" id="newChangedGroupName" name="GroupDto.Name" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-sm" style="margin-top: 15px;">Edit Group Name</button>
+                <button type="submit" class="btn btn-primary btn-sm" style="margin-top: 15px;">Update Group Name</button>
 
                 @if (ViewBag.SuccessMessage != null)
                 {

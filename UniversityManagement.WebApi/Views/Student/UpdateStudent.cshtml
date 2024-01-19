@@ -4,15 +4,15 @@
             <form method="post">
                 
                 <div class="panel-heading">
-                    <h3 class="panel-title">Edit Student</h3>
+                    <h3 class="panel-title">Update Student</h3>
                 </div>
 
                 <div class="form-student mb-2">
                     <label for="studentId" style="margin-right: 10px; margin-bottom: 5px; margin-top: 10px">
-                        <b>Select a student to edit a first or last name:</b>
+                        <b>Select a student to update a first or last name:</b>
                     </label>
 
-                    <select class="form-control" style="width: 250px;" id="studentId" name="studentId" onchange="getStudentBothName()">
+                    <select class="form-control" style="width: 250px;" id="studentId" name="StudentDto.Id" onchange="getStudentBothName()">
                         @if (ViewBag.StudentsList != null)
                         {
                             foreach (var student in ViewBag.StudentsList)
@@ -32,15 +32,15 @@
                     <label for="newChangedFirstName" style="margin-right: 10px; margin-bottom: 5px;">
                         <b>Enter first name:</b>
                     </label>
-                    <input type="text" class="form-control form-control-sm" style="width: 250px" id="newChangedFirstName" name="newChangedFirstName" required>
+                    <input type="text" class="form-control form-control-sm" style="width: 250px" id="newChangedFirstName" name="StudentDto.FirstName" required>
 
                     <label for="newChangedLastName" style="margin-right: 10px; margin-bottom: 5px;">
                         <b>Enter last name:</b>
                     </label>
-                    <input type="text" class="form-control form-control-sm" style="width: 250px" id="newChangedLastName" name="newChangedLastName" required>
+                    <input type="text" class="form-control form-control-sm" style="width: 250px" id="newChangedLastName" name="StudentDto.LastName" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-sm" style="margin-top: 15px;">Edit Group Name</button>
+                <button type="submit" class="btn btn-primary btn-sm" style="margin-top: 15px;">Update Student Name</button>
 
                 @if (ViewBag.SuccessMessage != null)
                 {

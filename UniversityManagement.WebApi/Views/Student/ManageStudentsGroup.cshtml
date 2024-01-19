@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<UniversityManagement.Application.EntitiesDto.StudentDto>
-@using Microsoft.EntityFrameworkCore
 
 <style>
     .table td 
@@ -41,7 +40,7 @@
                         <td>
                             <div class="d-flex">
 
-                                <select class="form-control mr-2" id="groupSelector_@student.Id" style="width: 200px; height: 40px; margin-right: 10px;">
+                                <select class="form-control mr-2" id="groupSelector_@student.Id" name="GroupDto.Id" style="width: 200px; height: 40px; margin-right: 10px;">
                                     @foreach (var group in ViewBag.GroupsList)
                                     {
                                         <option value="@group.Id">@group.Name</option>
