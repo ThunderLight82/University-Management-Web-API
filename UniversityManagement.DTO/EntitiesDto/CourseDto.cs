@@ -1,6 +1,6 @@
 ﻿using UniversityManagement.Domain.Entities;
 
-namespace UniversityManagement.Application.EntitiesDto;
+namespace UniversityManagement.DTO.EntitiesDto;
 
 public class CourseDto : BaseEntityDto
 {
