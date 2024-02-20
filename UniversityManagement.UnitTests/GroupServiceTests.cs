@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using UniversityManagement.Application.Interfaces;
 using UniversityManagement.Application.Services;
-using UniversityManagement.Application.Services.Interfaces;
 using UniversityManagement.Application.Validations;
 using UniversityManagement.DataAccess;
 using UniversityManagement.DTO.EntitiesDto;
