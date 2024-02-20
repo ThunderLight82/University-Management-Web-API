@@ -1,6 +1,8 @@
 # "University Management" Project
 
-The Full-Stack Web API project efficiently manages university life, covering courses, groups, and students. It utilizes MVC design with a flexible Clean Architecture style and a simple client interface.
+The Full-Stack Web API project efficiently manages university life, covering courses, groups, and students. It utilizes an MVC design with a flexible Clean Architecture style.
+
+On the front end, the project utilizes HTML/CSS, AJAX, and jQuery to create a simple yet effective user interface.
 
 ## Tech Stack
 
