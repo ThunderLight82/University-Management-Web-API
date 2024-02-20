@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using UniversityManagement.Application.Services.Interfaces;
+using UniversityManagement.Application.Interfaces;
 using UniversityManagement.Domain.Entities;
 using UniversityManagement.DataAccess;
 using UniversityManagement.DTO.EntitiesDto;
@@ -12,9 +12,9 @@ public class GroupService : BaseService<Group>, IGroupService
 {
     private readonly IMapper _mapper;
     private readonly ILogger<GroupService> _logger;
-    private readonly IValidationService _validationService;
+    private readonly IGroupServiceValidation _validationService;
 
-    public GroupService(UniversityDbContext dbContext, IMapper mapper, ILogger<GroupService> logger, IValidationService validationService)
+    public GroupService(UniversityDbContext dbContext, IMapper mapper, ILogger<GroupService> logger, IGroupServiceValidation validationService)
         : base(dbContext)
     {
         _mapper = mapper;

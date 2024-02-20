@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
+using UniversityManagement.Application.Interfaces;
 using UniversityManagement.Application.Services;
 using UniversityManagement.Application.Services.Interfaces;
 using UniversityManagement.Application.Validations;
@@ -15,17 +16,17 @@ namespace UniversityManagement.UnitTests;
 public class GroupServiceTests
 {
     private readonly Mock<ILogger<GroupService>> _mockLoggerService;
-    private readonly Mock<ILogger<ValidationService>> _mockLoggerValidationService;
+    private readonly Mock<ILogger<GroupServiceValidation>> _mockLoggerValidationService;
     private readonly IMapper _testMapper;
     private readonly UniversityDbContext _dbContext;
     private readonly UniversityDbContext _emptyDbContext;
-    private readonly IValidationService _validationService;
+    private readonly IGroupServiceValidation _validationService;
     private readonly IGroupService _groupService;
 
     public GroupServiceTests()
     {
         _mockLoggerService = new Mock<ILogger<GroupService>>();
-        _mockLoggerValidationService = new Mock<ILogger<ValidationService>>();
+        _mockLoggerValidationService = new Mock<ILogger<GroupServiceValidation>>();
         
         _testMapper = new MapperConfiguration(cfg => cfg
                 .AddProfile(new EntitiesMapper()))
@@ -33,7 +34,7 @@ public class GroupServiceTests
 
         _dbContext = CreateAndSeedTestDb();
 
-        _validationService = new ValidationService(_mockLoggerValidationService.Object);
+        _validationService = new GroupServiceValidation(_mockLoggerValidationService.Object);
         
         _groupService = new GroupService(_dbContext, _testMapper, _mockLoggerService.Object, _validationService);
 
