@@ -1,5 +1,5 @@
-﻿using UniversityManagement.Application.EntitiesDto;
-using UniversityManagement.Domain.Entities;
+﻿using UniversityManagement.Domain.Entities;
+using UniversityManagement.DTO.EntitiesDto;
 
 namespace UniversityManagement.Application.Services.Interfaces;
 
@@ -16,7 +16,7 @@ public interface IValidationService
     
     #endregion
 
-    #region GroupValidation
+    #region GroupServiceValidation
 
     void ValidateGetGroupsById(int groupId);
     void ValidateGetGroups(IEnumerable<Group> groups);
@@ -27,7 +27,7 @@ public interface IValidationService
 
     #endregion
 
-    #region CourseValidation
+    #region CourseServiceValidation
 
     void ValidateGetCourseById(int courseId);
     void ValidateGetCourses(IEnumerable<Course> courses);

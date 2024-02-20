@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using UniversityManagement.Application.EntitiesDto;
 using UniversityManagement.Domain.Entities;
+using UniversityManagement.DTO.EntitiesDto;
 
 namespace UniversityManagement.WebApi.AutoMapper;
 

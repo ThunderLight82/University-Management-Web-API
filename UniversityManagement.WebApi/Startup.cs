@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using UniversityManagement.Application.Services;
 using UniversityManagement.Application.Services.Interfaces;
+using UniversityManagement.Application.Validations;
 using UniversityManagement.WebApi.AutoMapper;
 
 namespace UniversityManagement.WebApi;

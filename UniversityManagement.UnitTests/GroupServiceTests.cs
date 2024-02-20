@@ -2,10 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using UniversityManagement.Application.EntitiesDto;
 using UniversityManagement.Application.Services;
 using UniversityManagement.Application.Services.Interfaces;
+using UniversityManagement.Application.Validations;
 using UniversityManagement.DataAccess;
+using UniversityManagement.DTO.EntitiesDto;
 using UniversityManagement.WebApi.AutoMapper;
 using Xunit;
 

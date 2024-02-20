@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using UniversityManagement.Application.EntitiesDto;
 using UniversityManagement.Application.Services.Interfaces;
 using UniversityManagement.Domain.Entities;
 using UniversityManagement.DataAccess;
+using UniversityManagement.DTO.EntitiesDto;
 
 namespace UniversityManagement.Application.Services;
 

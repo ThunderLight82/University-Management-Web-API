@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using UniversityManagement.Application.EntitiesDto;
 using UniversityManagement.Application.Services.Interfaces;
 using UniversityManagement.Domain.Entities;
+using UniversityManagement.DTO.EntitiesDto;
 
-namespace UniversityManagement.Application.Services;
+namespace UniversityManagement.Application.Validations;
 
 public class ValidationService : IValidationService
 {
@@ -78,7 +78,7 @@ public class ValidationService : IValidationService
     
     #endregion
 
-    #region GroupValidation
+    #region GroupServiceValidation
 
     public void ValidateGetGroupsById(int groupId)
     {
@@ -148,7 +148,7 @@ public class ValidationService : IValidationService
 
     #endregion
 
-    #region CourseValidation
+    #region CourseServiceValidation
     
     public void ValidateGetCourseById(int courseId)
     {

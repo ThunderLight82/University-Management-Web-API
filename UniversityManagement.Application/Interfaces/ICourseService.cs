@@ -1,4 +1,4 @@
-﻿using UniversityManagement.Application.EntitiesDto;
+﻿using UniversityManagement.DTO.EntitiesDto;
 using UniversityManagement.Domain.Entities;
 
 namespace UniversityManagement.Application.Services.Interfaces;
