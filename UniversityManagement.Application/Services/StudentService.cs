@@ -52,6 +52,8 @@ public class StudentService : BaseService<Student>, IStudentService
         student.LastName = studentDto.LastName;
         
         await Update(student);
+        
+        await SaveChangesAsync();
         _logger.LogInformation($"Student with id [{studentDto.Id}] first and/or last name changed successfully.");
         
         return _mapper.Map<StudentDto>(student);
@@ -68,6 +70,8 @@ public class StudentService : BaseService<Student>, IStudentService
         studentEntity.GroupId = default;
 
         await Add(studentEntity);
+        
+        await SaveChangesAsync();
         _logger.LogInformation($"Student '{newStudentDto.FirstName} " + $"{newStudentDto.LastName}' created successfully.");
         
         return _mapper.Map<StudentDto>(studentEntity);
@@ -80,6 +84,8 @@ public class StudentService : BaseService<Student>, IStudentService
         var student = await GetById(studentDto.Id);
         
         await Delete(student);
+        
+        await SaveChangesAsync();
         _logger.LogInformation($"Student with id [{studentDto.Id}] was successfully deleted.");
     }
     
@@ -98,6 +104,8 @@ public class StudentService : BaseService<Student>, IStudentService
         student.GroupId = studentDto.GroupId;
         
         await Update(student);
+        
+        await SaveChangesAsync();
         _logger.LogInformation($"Student with Id [{studentDto.Id}] was successfully added to group with Id [{studentDto.GroupId}].");
     }
     
@@ -110,6 +118,8 @@ public class StudentService : BaseService<Student>, IStudentService
         student.GroupId = default;
         
         await Update(student);
+        
+        await SaveChangesAsync();
         _logger.LogInformation($"Student with Id [{studentDto.Id}] was successfully removed from group.");
     }
 }

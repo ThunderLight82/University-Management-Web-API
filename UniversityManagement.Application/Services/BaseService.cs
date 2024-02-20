@@ -38,6 +38,6 @@ public abstract class BaseService<TBaseEntity> : IBaseService<TBaseEntity> where
         return Task.CompletedTask;
     }
     
-    public virtual async Task SaveChangesAsync(CancellationToken cancellationToken) => 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+    public virtual async Task SaveChangesAsync() =>
+        await _dbContext.SaveChangesAsync();
 }

@@ -9,4 +9,5 @@ public interface IBaseService<TBaseEntity> where TBaseEntity : BaseEntity
     Task Add(TBaseEntity entity);
     Task Delete(TBaseEntity entity);
     Task Update(TBaseEntity entity);
+    Task SaveChangesAsync();
 }

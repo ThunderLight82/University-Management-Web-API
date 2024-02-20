@@ -67,6 +67,8 @@ public class GroupService : BaseService<Group>, IGroupService
         group.Name = groupDto.Name;
         
         await Update(group);
+        
+        await SaveChangesAsync();
         _logger.LogInformation($"Group with Id [{groupDto.Id}] name changed successfully. New name is '{groupDto.Name}'.");
         
         return _mapper.Map<GroupDto>(group);
@@ -90,6 +92,8 @@ public class GroupService : BaseService<Group>, IGroupService
         groupEntity.CourseId = newGroupDto.CourseId;
         
         await Add(groupEntity);
+        
+        await SaveChangesAsync();
         _logger.LogInformation($"New group with name [{newGroupDto.Name}] is successfully created within course with Id:[{newGroupDto.CourseId}]");
         
         return _mapper.Map<GroupDto>(groupEntity);
@@ -108,6 +112,8 @@ public class GroupService : BaseService<Group>, IGroupService
         }
         
         await Delete(group);
+        
+        await SaveChangesAsync();
         _logger.LogInformation($"Group with Id [{groupDto.Id}] was successfully deleted");
     }
 }
