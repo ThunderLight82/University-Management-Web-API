@@ -15,7 +15,7 @@ The Full-Stack Web API project efficiently manages university life, covering cou
 - Serilog
 - Swagger
   
-  **Front-End:**
+**Front-End:**
 - HTML/CSS
 - AJAX
 - jQuery
