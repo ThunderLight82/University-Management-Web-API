@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UniversityManagement.Application.Services.Interfaces;
+using UniversityManagement.Application.Interfaces;
 using UniversityManagement.Domain.Entities;
 using UniversityManagement.DataAccess;
 
