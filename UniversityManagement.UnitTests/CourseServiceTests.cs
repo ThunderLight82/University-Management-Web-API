@@ -2,8 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
+using UniversityManagement.Application.Interfaces;
 using UniversityManagement.Application.Services;
-using UniversityManagement.Application.Services.Interfaces;
+using UniversityManagement.Application.Interfaces;
 using UniversityManagement.Application.Validations;
 using UniversityManagement.DataAccess;
 using UniversityManagement.WebApi.AutoMapper;
@@ -14,17 +15,17 @@ namespace UniversityManagement.UnitTests;
 public class CourseServiceTests
 {
     private readonly Mock<ILogger<CourseService>> _mockLoggerService;
-    private readonly Mock<ILogger<ValidationService>> _mockLoggerValidationService;
+    private readonly Mock<ILogger<CourseServiceValidation>> _mockLoggerValidationService;
     private readonly IMapper _testMapper;
     private readonly UniversityDbContext _dbContext;
     private readonly UniversityDbContext _emptyDbContext;
-    private readonly IValidationService _validationService;
+    private readonly ICourseServiceValidation _validationService;
     private readonly ICourseService _courseService;
     
     public CourseServiceTests()
     {
         _mockLoggerService = new Mock<ILogger<CourseService>>();
-        _mockLoggerValidationService = new Mock<ILogger<ValidationService>>();
+        _mockLoggerValidationService = new Mock<ILogger<CourseServiceValidation>>();
         
         _testMapper = new MapperConfiguration(cfg => cfg
             .AddProfile(new EntitiesMapper()))
@@ -32,7 +33,7 @@ public class CourseServiceTests
 
         _dbContext = CreateAndSeedTestDb();
 
-        _validationService = new ValidationService(_mockLoggerValidationService.Object);
+        _validationService = new CourseServiceValidation(_mockLoggerValidationService.Object);
         
         _courseService = new CourseService(_dbContext, _testMapper, _mockLoggerService.Object, _validationService);
         

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using UniversityManagement.Application.Services.Interfaces;
+using UniversityManagement.Application.Interfaces;
 using UniversityManagement.Domain.Entities;
 using UniversityManagement.DataAccess;
 using UniversityManagement.DTO.EntitiesDto;
@@ -12,9 +12,9 @@ public class CourseService : BaseService<Course>, ICourseService
 {
     private readonly IMapper _mapper;
     private readonly ILogger<CourseService> _logger;
-    private readonly IValidationService _validationService;
+    private readonly ICourseServiceValidation _validationService;
 
-    public CourseService(UniversityDbContext dbContext, IMapper mapper, ILogger<CourseService> logger, IValidationService validationService)
+    public CourseService(UniversityDbContext dbContext, IMapper mapper, ILogger<CourseService> logger, ICourseServiceValidation validationService)
         : base(dbContext)
     {
         _mapper = mapper;
