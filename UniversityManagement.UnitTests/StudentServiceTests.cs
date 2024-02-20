@@ -2,11 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using UniversityManagement.Application.EntitiesDto;
+using UniversityManagement.Application.Interfaces;
 using UniversityManagement.Application.Services;
-using UniversityManagement.Application.Services.Interfaces;
+using UniversityManagement.Application.Validations;
 using UniversityManagement.Domain.Entities;
 using UniversityManagement.DataAccess;
+using UniversityManagement.DTO.EntitiesDto;
 using UniversityManagement.WebApi.AutoMapper;
 using Xunit;
 
@@ -15,17 +16,17 @@ namespace UniversityManagement.UnitTests;
 public class StudentServiceTests
 {
     private readonly Mock<ILogger<StudentService>> _mockLoggerService;
-    private readonly Mock<ILogger<ValidationService>> _mockLoggerValidationService;
+    private readonly Mock<ILogger<StudentServiceValidation>> _mockLoggerValidationService;
     private readonly IMapper _testMapper;
     private readonly UniversityDbContext _dbContext;
     private readonly UniversityDbContext _emptyDbContext;
-    private readonly IValidationService _validationService;
+    private readonly IStudentServiceValidation _validationService;
     private readonly IStudentService _studentService;
 
     public StudentServiceTests()
     {
         _mockLoggerService = new Mock<ILogger<StudentService>>();
-        _mockLoggerValidationService = new Mock<ILogger<ValidationService>>();
+        _mockLoggerValidationService = new Mock<ILogger<StudentServiceValidation>>();
         
         _testMapper = new MapperConfiguration(cfg => cfg
                 .AddProfile(new EntitiesMapper()))
@@ -33,7 +34,7 @@ public class StudentServiceTests
         
         _dbContext = CreateAndSeedTestDb();
 
-        _validationService = new ValidationService(_mockLoggerValidationService.Object);
+        _validationService = new StudentServiceValidation(_mockLoggerValidationService.Object);
         
         _studentService = new StudentService(_dbContext, _testMapper, _mockLoggerService.Object, _validationService);
         

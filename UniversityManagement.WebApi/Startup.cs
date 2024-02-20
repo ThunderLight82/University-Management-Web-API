@@ -2,7 +2,8 @@ using UniversityManagement.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using UniversityManagement.Application.Services;
-using UniversityManagement.Application.Services.Interfaces;
+using UniversityManagement.Application.Interfaces;
+using UniversityManagement.Application.Validations;
 using UniversityManagement.WebApi.AutoMapper;
 
 namespace UniversityManagement.WebApi;
@@ -43,7 +44,9 @@ public class Startup
         services.AddScoped<IGroupService, GroupService>();
         services.AddScoped<IStudentService, StudentService>();
         
-        services.AddTransient<IValidationService, ValidationService>();
+        services.AddTransient<ICourseServiceValidation, CourseServiceValidation>();
+        services.AddTransient<IGroupServiceValidation, GroupServiceValidation>();
+        services.AddTransient<IStudentServiceValidation, StudentServiceValidation>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

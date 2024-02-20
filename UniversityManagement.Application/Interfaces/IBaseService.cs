@@ -1,6 +1,6 @@
 ﻿using UniversityManagement.Domain.Entities;
 
-namespace UniversityManagement.Application.Services.Interfaces;
+namespace UniversityManagement.Application.Interfaces;
 
 public interface IBaseService<TBaseEntity> where TBaseEntity : BaseEntity
 {
@@ -9,4 +9,5 @@ public interface IBaseService<TBaseEntity> where TBaseEntity : BaseEntity
     Task Add(TBaseEntity entity);
     Task Delete(TBaseEntity entity);
     Task Update(TBaseEntity entity);
+    Task SaveChangesAsync();
 }

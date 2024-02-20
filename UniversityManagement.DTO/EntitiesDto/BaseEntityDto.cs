@@ -1,4 +1,4 @@
-﻿namespace UniversityManagement.Application.EntitiesDto;
+﻿namespace UniversityManagement.DTO.EntitiesDto;
 
 public abstract class BaseEntityDto
 {

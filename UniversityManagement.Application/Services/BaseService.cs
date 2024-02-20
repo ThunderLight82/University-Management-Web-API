@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UniversityManagement.Application.Services.Interfaces;
+using UniversityManagement.Application.Interfaces;
 using UniversityManagement.Domain.Entities;
 using UniversityManagement.DataAccess;
 
 namespace UniversityManagement.Application.Services;
 
+// UnitOfWork is declared here instead of in DataAccess layer or Repos.
 public abstract class BaseService<TBaseEntity> : IBaseService<TBaseEntity> where TBaseEntity : BaseEntity
 {
     protected readonly UniversityDbContext _dbContext;
@@ -20,21 +21,23 @@ public abstract class BaseService<TBaseEntity> : IBaseService<TBaseEntity> where
     public virtual async Task<IEnumerable<TBaseEntity>> GetAll() =>
         await _dbContext.Set<TBaseEntity>().ToListAsync();
 
-    public virtual async Task Add(TBaseEntity entity)
-    {
+    public virtual async Task Add(TBaseEntity entity) =>
         await _dbContext.Set<TBaseEntity>().AddAsync(entity);
-        await _dbContext.SaveChangesAsync();
-    }
-
-    public virtual async Task Delete(TBaseEntity entity)
+    
+    public virtual Task Delete(TBaseEntity entity)
     {
         _dbContext.Set<TBaseEntity>().Remove(entity);
-        await _dbContext.SaveChangesAsync();
+        
+        return Task.CompletedTask;
     }
 
-    public virtual async Task Update(TBaseEntity entity)
+    public virtual Task Update(TBaseEntity entity)
     {
         _dbContext.Entry(entity).State = EntityState.Modified;
-        await _dbContext.SaveChangesAsync();
+        
+        return Task.CompletedTask;
     }
+    
+    public virtual async Task SaveChangesAsync() =>
+        await _dbContext.SaveChangesAsync();
 }

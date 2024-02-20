@@ -1,7 +1,7 @@
-﻿using UniversityManagement.Application.EntitiesDto;
+﻿using UniversityManagement.DTO.EntitiesDto;
 using UniversityManagement.Domain.Entities;
 
-namespace UniversityManagement.Application.Services.Interfaces;
+namespace UniversityManagement.Application.Interfaces;
 
 public interface ICourseService : IBaseService<Course>
 {

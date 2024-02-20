@@ -9,13 +9,12 @@
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="12.0.1" />
       <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-      <PackageReference Include="FluentValidation" Version="11.8.1" />
-      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
       <PackageReference Include="MediatR" Version="12.2.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\UniversityManagement.DataAccess\UniversityManagement.DataAccess.csproj" />
+      <ProjectReference Include="..\UniversityManagement.DTO\UniversityManagement.DTO.csproj" />
     </ItemGroup>
 
 </Project>
