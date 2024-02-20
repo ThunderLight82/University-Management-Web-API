@@ -10,7 +10,7 @@ The Full-Stack Web API project efficiently manages university life, covering cou
 - EF Core
 - MSSQL
 - AutoMapper
-- Moq,
+- Moq
 - xUnit
 - Serilog
 - Swagger
