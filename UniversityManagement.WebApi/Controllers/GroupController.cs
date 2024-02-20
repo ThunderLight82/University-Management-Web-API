@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UniversityManagement.Application.Services.Interfaces;
+using UniversityManagement.Application.Interfaces;
 using UniversityManagement.DTO.EntitiesDto;
 
 namespace UniversityManagement.WebApi.Controllers;
